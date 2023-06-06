@@ -1,0 +1,7 @@
+﻿  pratice5.cpp
+D:\ThucTap\CODEBT\pratice5\pratice5\pratice5.cpp(22,2): warning C4091: 'typedef ': ignored on left of 'Cadidate' when no variable is declared
+D:\ThucTap\CODEBT\pratice5\pratice5\pratice5.cpp(140,41): warning C4101: 'exp': unreferenced local variable
+D:\ThucTap\CODEBT\pratice5\pratice5\pratice5.cpp(197,11): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+D:\ThucTap\CODEBT\pratice5\pratice5\pratice5.cpp(399,11): warning C4244: 'initializing': conversion from 'std::streamoff' to 'int', possible loss of data
+D:\ThucTap\CODEBT\pratice5\pratice5\pratice5.cpp(416,35): warning C4101: 'exp': unreferenced local variable
+  pratice5.vcxproj -> D:\ThucTap\CODEBT\pratice5\Debug\pratice5.exe
