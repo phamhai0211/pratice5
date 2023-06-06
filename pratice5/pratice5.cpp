@@ -10,6 +10,7 @@ typedef struct Cadidate
     char id[40];
     char hoten[35];
     char sex[15];
+    unsigned int year : 2;
     unsigned int scoreC:7;
     unsigned int scoreJava:7;
     unsigned int manage:7;
@@ -54,13 +55,14 @@ void Cadidate::NHAP_CD()
     while (1)
 
     {
-        int c,java,eng, manage, exp;
+        int c,java,eng, manage, exp, year;
         printf( "ID: "); fgets(CD.id, sizeof(CD.id), stdin);
         printf( "Ho va ten  : "); fgets(CD.hoten, sizeof(CD.hoten),stdin);
         printf( "Gioi tinh   : "); fgets(CD.sex, sizeof(CD.sex),stdin);
+        cout << "Nhap nam sinh :"; cin >> year; CD.year = year; cin.ignore();
         printf( "diem ky nang c++");
          cin>>c;
-        CD.scoreC = c;
+         CD.scoreC = c; cin.ignore();
         printf( "diem ky nang Java");
         cin >> java;
         CD.scoreJava = java;
@@ -73,22 +75,11 @@ void Cadidate::NHAP_CD()
         cout << "\n Tiep tuc (C/K) ?"; cin >> ok; cin.ignore();
 
         if ((ok == 'k') || (ok == 'K')) break;
-
-
-
     }
 
     FW.close();
 
 }
-
-//double Cadidate::DTB_SV_TOAN()
-//
-//{
-//
-//    return (scoreC * 3 + scoreJava * 4 + manage * 3 + scoreE * 3);
-//
-//}
 
 void Cadidate::INRA_CD()
 
@@ -106,7 +97,7 @@ void Cadidate::INRA_CD()
 
     cout << setw(3) << "STT" << setw(11) << " " <<" ID " << setw(25) << "Ho Ten"
 
-        << setw(11) << "Gioi tinh " << setw(11)
+        << setw(11) << "Gioi tinh " << setw(11) <<"nam sinh"
 
         << setw(11) << "c++" << setw(11) << "java" << setw(11) << "tieng anh" << setw(11) << "quan ly"
 
@@ -119,7 +110,7 @@ void Cadidate::INRA_CD()
 
         cout << "\n" << setw(3) << TT << " ";
 
-        cout << setw(11) << cd.id << setw(25) << cd.hoten << setw(11) << cd.sex
+        cout << setw(11) << cd.id << setw(25) << cd.hoten << setw(11) <<cd.year<<setw(11) << cd.sex
 
             << setw(11) << cd.scoreC << setw(11) << cd.scoreJava << setw(11) << cd.scoreE << setw(11) << cd.manage << setw(15) << cd.yearOfEx << endl;
         TT = TT + 1;
@@ -137,7 +128,7 @@ void Cadidate::SUA_CD()
     Cadidate cd;
     fstream FW;
     int n; char ok;
-   unsigned int c = 0,java = 0, manage, exp, eng;
+   unsigned int c = 0,java = 0,year, manage, exp, eng;
     cout << "\n Nhap ban ghi can sua:";
 
     cin >> n; cin.ignore();
@@ -153,7 +144,7 @@ void Cadidate::SUA_CD()
     cout << "Ho va ten : "; cin.getline(cd.id, 25);
 
     cout << "Gioi tinh : "; cin.getline(cd.sex, 10);
-
+    cout << "nam sinh :"; cin >> year; cd.year = year; cin.ignore();
     cout << "Diem ky nang c++ ";
     cin >> c;
     cd.scoreC = c; cin.ignore();
@@ -176,14 +167,8 @@ void Cadidate::SUA_CD()
 
     FW.seekp((n - 1) * sizeof(cd)); //chuyen con tron den ban ghi thu n
 
-
-
     if (ok == 'c' || ok == 'C') FW.write((char*)&cd, sizeof(cd)); //ghi lai ban ghi
-
-
-
     FW.close();
-
 }
 
 void Cadidate::BS_CD()
@@ -211,13 +196,12 @@ void Cadidate::BS_CD()
     while (1)
 
     {
-        int c, java, eng, exp, manage;
+        int c, java, eng, exp, manage, year;
         cout << "\nNhap ban ghi thu: " << n;
         cout << "ID: "; cin.getline(cd.id, 10);
         cout << "Ho va ten : "; cin.getline(cd.id, 25);
-
         cout << "Gioi tinh : "; cin.getline(cd.sex, 10);
-
+        cout << "Nhap nam sinh: "; cin >> year; cd.year = year; cin.ignore();
         cout << "Diem ky nang c++ ";
         cin >> c;
         cd.scoreC = c; cin.ignore();
@@ -300,7 +284,7 @@ void JobRequirment::NHAP_JOB_REQUIR()
 void JobRequirment::INRA_JOB_REQUIR()
 
 {
-
+    int count;
     JobRequirment jr;
 
     fstream FR;
@@ -332,11 +316,11 @@ void JobRequirment::INRA_JOB_REQUIR()
             << setw(11) << jr.scoreC << setw(11) << jr.scoreJava << setw(11) << jr.scoreE << setw(11) << jr.manage << setw(15) << jr.expOfYear << endl;
 
         TT = TT + 1;
-
+        
     }
-
+   
     FR.close();
-
+   
 }
 
 void JobRequirment::SUA_JOB_REQUIR()
