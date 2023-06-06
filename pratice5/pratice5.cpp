@@ -2,24 +2,26 @@
 # include <fstream>
 # include <iomanip>
 #include<cstdio>
+#include<cstring>
 using namespace std;
 
 
 typedef struct Cadidate 
 {
-    char id[40];
-    char hoten[35];
-    char sex[15];
-    unsigned int year : 2;
+    char id[8];
+    char hoten[40];
+    char sex[4];
+    unsigned int year : 8;
     unsigned int scoreC:7;
     unsigned int scoreJava:7;
     unsigned int manage:7;
     unsigned int scoreE:7;
-    unsigned int yearOfEx:7;
+    unsigned int yearOfEx:5;
     void NHAP_CD();
     void INRA_CD();
     void SUA_CD();
     void BS_CD();
+    int SL();   
 };
 
 struct JobRequirment 
@@ -27,8 +29,9 @@ struct JobRequirment
 {
 
     char id[8];
-    char hoten[35];
-    char gioitinh[15];
+    char hoten[100];
+    char gioitinh[4];
+    unsigned int year : 4;
     unsigned int scoreC : 7;
     unsigned int scoreJava : 7;
     unsigned int scoreE : 7;
@@ -38,10 +41,11 @@ struct JobRequirment
     void NHAP_JOB_REQUIR();
     void INRA_JOB_REQUIR();
     void SUA_JOB_REQUIR();
-
     void BS_JOB();
+    int SL_JOB();
 };
 
+// INPUT CANDIDATE
 void Cadidate::NHAP_CD()
 {
     Cadidate CD;
@@ -49,27 +53,41 @@ void Cadidate::NHAP_CD()
     char ok;
 
     FW.open("Candidates.txt", ios::out);
-
     cout << "\n Nhap danh sach ung cu vien \n";
-
     while (1)
 
     {
         int c,java,eng, manage, exp, year;
-        printf( "ID: "); fgets(CD.id, sizeof(CD.id), stdin);
-        printf( "Ho va ten  : "); fgets(CD.hoten, sizeof(CD.hoten),stdin);
-        printf( "Gioi tinh   : "); fgets(CD.sex, sizeof(CD.sex),stdin);
+        printf( "ID: "); cin.getline(CD.id,8);
+        printf( "Ho va ten  : "); cin.getline(CD.hoten,40);
+        printf( "Gioi tinh   : "); cin.getline(CD.sex,4);
         cout << "Nhap nam sinh :"; cin >> year; CD.year = year; cin.ignore();
-        printf( "diem ky nang c++");
-         cin>>c;
-         CD.scoreC = c; cin.ignore();
-        printf( "diem ky nang Java");
-        cin >> java;
-        CD.scoreJava = java;
-        cin.ignore();
-        printf( " Diem ky nang quan ly : ");cin>>manage; CD.manage = manage; cin.ignore();
-        printf(" Diem ky nang tieng anh : "); cin >> eng; CD.scoreE= eng; cin.ignore();
-        printf("so nam kinh nghiem: "); cin>>exp; CD.yearOfEx=exp; cin.ignore();
+        do {
+            printf( "diem ky nang c++ : ");
+            cin>>c;
+            
+        } while ((c<0)||(c>100));
+        CD.scoreC = c; cin.ignore();
+        do {
+            printf("diem ky nang Java: ");
+            cin >> java;
+        } while ((java < 0) || (java > 100)); 
+        CD.scoreJava = java;cin.ignore();
+        do {
+
+        printf( " Diem ky nang quan ly : ");cin>>manage; 
+        } while ((manage<0)||(manage>100));
+        CD.manage = manage; cin.ignore();
+
+        do {
+            printf(" Diem ky nang tieng anh : "); cin >> eng;
+        } while ((eng<0)||(eng>100));
+         CD.scoreE= eng; cin.ignore();
+
+         do {
+            printf("so nam kinh nghiem: "); cin>>exp; 
+         } while ((exp<0)||(exp>30));
+        CD.yearOfEx=exp; cin.ignore();
         FW.write((char*)&CD, sizeof(CD));
 
         cout << "\n Tiep tuc (C/K) ?"; cin >> ok; cin.ignore();
@@ -81,6 +99,9 @@ void Cadidate::NHAP_CD()
 
 }
 
+
+
+// OUTPUT CANDIDATE
 void Cadidate::INRA_CD()
 
 {
@@ -95,13 +116,13 @@ void Cadidate::INRA_CD()
 
     cout << "\n danh sach Candidates \n";
 
-    cout << setw(3) << "STT" << setw(11) << " " <<" ID " << setw(25) << "Ho Ten"
+    cout << setw(3) << "STT" << setw(7) << " " <<" ID " << setw(11) << "Ho Ten"
 
-        << setw(11) << "Gioi tinh " << setw(11) <<"nam sinh"
+        << setw(7) << "Gioi tinh " << setw(7) <<"nam sinh"
 
-        << setw(11) << "c++" << setw(11) << "java" << setw(11) << "tieng anh" << setw(11) << "quan ly"
+        << setw(7) << "c++" << setw(7) << "java" << setw(7) << "tieng anh" << setw(7) << "quan ly"
 
-        << setw(15) << "exp" << "\n";
+        << setw(7) << "exp" << "\n";
 
     int TT = 1;
     while (FR.read((char*)&cd, sizeof(cd)))
@@ -110,9 +131,9 @@ void Cadidate::INRA_CD()
 
         cout << "\n" << setw(3) << TT << " ";
 
-        cout << setw(11) << cd.id << setw(25) << cd.hoten << setw(11) <<cd.year<<setw(11) << cd.sex
+        cout << setw(7) << cd.id << setw(11) << cd.hoten << setw(7) <<cd.year<<setw(7) << cd.sex
 
-            << setw(11) << cd.scoreC << setw(11) << cd.scoreJava << setw(11) << cd.scoreE << setw(11) << cd.manage << setw(15) << cd.yearOfEx << endl;
+            << setw(7) << cd.scoreC << setw(7) << cd.scoreJava << setw(7) << cd.scoreE << setw(7) << cd.manage << setw(7) << cd.yearOfEx << endl;
         TT = TT + 1;
 
     }
@@ -121,6 +142,26 @@ void Cadidate::INRA_CD()
 
 }
 
+int Cadidate::SL() {
+    Cadidate cd;
+    fstream FR;
+    FR.open("Candidates.txt", ios::in);
+    if (FR.fail()) { cout << "\n Loi mo tep tin"; return 0; }
+
+    int TT = 0;
+    while (FR.read((char*)&cd, sizeof(cd)))
+
+    {
+
+       
+        TT = TT + 1;
+
+    }
+    return TT;
+    FR.close();
+}
+
+// EDIT CANDIDATE
 void Cadidate::SUA_CD()
 
 {
@@ -139,30 +180,44 @@ void Cadidate::SUA_CD()
 
     cout << "\n nhap du lieu sua lai:\n ";
 
-    cout << "ID: "; cin.getline(cd.id, 10);
+    cout << "ID: "; cin.getline(cd.id, 8);
 
-    cout << "Ho va ten : "; cin.getline(cd.id, 25);
+    cout << "Ho va ten : "; cin.getline(cd.id, 40);
 
-    cout << "Gioi tinh : "; cin.getline(cd.sex, 10);
+    cout << "Gioi tinh : "; cin.getline(cd.sex, 4);
     cout << "nam sinh :"; cin >> year; cd.year = year; cin.ignore();
-    cout << "Diem ky nang c++ ";
-    cin >> c;
+    do {
+        cout << "Diem ky nang c++: ";
+        cin >> c;
+    } while ((c<0)||(c>100));
     cd.scoreC = c; cin.ignore();
-    cout << "Diem ky nang java ";
-    cin >> java;
+    do {
+        cout << "Diem ky nang java: ";
+        cin >> java;
+    } while ((java<0)||(java>100));
     cd.scoreJava = java;
     cin.ignore();
 
-    cout << " Diem ky nang quan ly : "; 
-    cin >> manage;
+    do {
+        cout << " Diem ky nang quan ly : ";
+        cin >> manage;
+    } while ((manage<0)||(manage>100));
     cd.manage = manage; cin.ignore();
 
-    cout << " Diem ky nang tieng anh : ";
-    cin>>eng;
+    do {
+        cout << " Diem ky nang tieng anh : ";
+        cin>>eng;
+
+    } while ((eng<0)||(java>0));
     cd.scoreE = eng; cin.ignore();
 
-    cout << "\nNhap nua khong (C/K) ? ";
+    do {
+        cout << "so nam kinh nghiem: ";
+        cin >> exp;
+    } while ((exp<0)||(exp>30));
+    cd.yearOfEx = exp; cin.ignore();
 
+    cout << "\nNhap nua khong (C/K) ? ";
     cin >> ok; cin.ignore();
 
     FW.seekp((n - 1) * sizeof(cd)); //chuyen con tron den ban ghi thu n
@@ -198,24 +253,40 @@ void Cadidate::BS_CD()
     {
         int c, java, eng, exp, manage, year;
         cout << "\nNhap ban ghi thu: " << n;
-        cout << "ID: "; cin.getline(cd.id, 10);
-        cout << "Ho va ten : "; cin.getline(cd.id, 25);
-        cout << "Gioi tinh : "; cin.getline(cd.sex, 10);
+        cout << "ID: "; cin.getline(cd.id, 8);
+        cout << "Ho va ten : "; cin.getline(cd.id, 40);
+        cout << "Gioi tinh : "; cin.getline(cd.sex, 4);
         cout << "Nhap nam sinh: "; cin >> year; cd.year = year; cin.ignore();
-        cout << "Diem ky nang c++ ";
-        cin >> c;
+        do {
+            cout << "Diem ky nang c++ ";
+            cin >> c;
+        } while ((c<0)||(c>100));     
         cd.scoreC = c; cin.ignore();
-        cout << "Diem ky nang java";
-        cin >> java;
+
+        do {
+            cout << "Diem ky nang java";
+            cin >> java;
+        } while ((java<0)||(java>100)); 
         cd.scoreJava = java; cin.ignore();
 
-        cout << " Diem ky nang quan ly : "; 
-        cin>>manage;
+        do {
+            cout << " Diem ky nang quan ly : ";
+            cin >> manage;
+        } while ((manage<0)||(manage>100));
         cd.manage = manage; cin.ignore();
 
-        cout << " Diem ky nang tieng anh : "; cin>>eng; cd.scoreE = eng; cin.ignore();
-        cout << "so nam kinh nghiem :";
-        cin>>exp; cd.yearOfEx = exp; cin.ignore();
+        do {
+             cout << " Diem ky nang tieng anh : "; cin>>eng;
+
+        } while ((eng<0)||(eng>100));
+        cd.scoreE = eng; cin.ignore();
+
+        do {
+
+            cout << "so nam kinh nghiem :";
+            cin>>exp; 
+        } while ((exp<0)||(exp>100));
+        cd.yearOfEx = exp; cin.ignore();
         FW.write((char*)&cd, sizeof(cd));
 
         cout << "\nNhap nua khong (C/K) ? ";
@@ -232,6 +303,21 @@ void Cadidate::BS_CD()
 
 }
 
+int JobRequirment::SL_JOB() {
+    JobRequirment jr;
+    fstream FR;
+    FR.open("Requirments.txt", ios::in);
+    if (FR.fail()) { cout << "\n Loi mo tep tin"; return 0; }
+
+    int TT = 0;
+    while (FR.read((char*)&jr, sizeof(jr)))
+
+    {
+        TT = TT + 1;
+    }
+    return TT;
+    FR.close();
+}
 void JobRequirment::NHAP_JOB_REQUIR()
 
 {
@@ -252,21 +338,39 @@ void JobRequirment::NHAP_JOB_REQUIR()
 
        // tin.NHAP();
         int c, java, eng, manage, exp;
-        cout << "id job: "; cin.getline(jr.id, 15);
-        cout << "Ho va ten  : "; cin.getline(jr.hoten, 35);
+        cout << "id job: "; cin.getline(jr.id, 8);
+        cout << "Ho va ten  : "; cin.getline(jr.hoten, 100);
         cout << "gioi tinh  : "; cin.getline(jr.gioitinh, 15);
-        cout << "Diem ky nang c++ ";
-        cin >> c;
+        do {
+            cout << "Diem ky nang c++: ";
+            cin >> c;
+
+        } while ((c<0)||(c>100));
         jr.scoreC = c; cin.ignore();
-        cout << "Diem ky nang java ";
-       cin>>java;
+
+        do {
+            cout << "Diem ky nang java: ";
+            cin >> java;
+        } while ((java<0)||(java>100));
+        
         jr.scoreJava = java;
         cin.ignore();
 
-       printf( " ky nang tieng anh:  "); cin>>eng; jr.scoreE = eng; cin.ignore();
+        do {
+             printf( " ky nang tieng anh:  "); cin>>eng;
 
-       printf(" ky nang quan ly: ");cin>>manage;jr.manage = manage; cin.ignore();
-       printf("so nam kinh nghiem: "); cin>>exp; jr.expOfYear = exp; cin.ignore();
+        } while ((eng<0)||(eng>100));
+       jr.scoreE = eng; cin.ignore();
+
+       do {
+           printf(" ky nang quan ly: "); cin >> manage;
+       } while (manage<0||manage>100);
+       jr.manage = manage; cin.ignore();
+
+       do {
+           printf("so nam kinh nghiem: "); cin >> exp;
+       } while ((exp<0)||(exp>30));
+       jr.expOfYear = exp; cin.ignore();
         FW.write((char*)&jr, sizeof(jr));
 
         cout << "\n Tiep tuc (C/K) ?"; cin >> ok; cin.ignore();
@@ -349,16 +453,31 @@ void JobRequirment::SUA_JOB_REQUIR()
     cout << "Ho va ten : "; cin.getline(jr.id, 25);
 
     cout << "gioi tinh : "; cin.getline(jr.gioitinh, 10);
-
-    cout << "Diem ky nang c++: ";
-    cin>>c;
+    do {
+        cout << "Diem ky nang c++: ";
+        cin>>c;
+    } while ((c<0)||(c>100));
     jr.scoreC = c; cin.ignore();
 
-    printf(" Diem ky nang java : "); cin>>java; jr.scoreJava = java; cin.ignore();
-    printf("Diem ky nang tieng anh: "); cin>>eng; jr.scoreE = eng; cin.ignore();
-    printf("Diem quan ly :"); cin>>manage; jr.manage = manage; cin.ignore();
+    do {
+        printf(" Diem ky nang java : "); cin >> java;
+    } while ((java<0)||(java>100));
+    jr.scoreJava = java; cin.ignore();
 
-    printf(" so nam kinh nghiem : "); cin>>exp; jr.expOfYear = exp; cin.ignore();
+    do {
+        printf("Diem ky nang tieng anh: "); cin >> eng;
+    } while ((eng<0)||(eng>100));
+    jr.scoreE = eng; cin.ignore();
+
+    do {
+        printf("Diem quan ly :"); cin>>manage; 
+    } while ((manage<0)||(manage>100));
+    jr.manage = manage; cin.ignore();
+
+    do {
+        printf(" so nam kinh nghiem : "); cin >> exp;
+    } while ((exp<0)||(exp>30));
+    jr.expOfYear = exp; cin.ignore();
 
    printf("\nNhap nua khong (C/K) ? ");
 
@@ -400,22 +519,39 @@ void JobRequirment::BS_JOB()
         int c, java, eng, manage, exp;
         cout << "\nNhap ban ghi thu: " << n;
 
-        cout << "id : "; cin.getline(jr.id, 10);
+        cout << "id : "; cin.getline(jr.id, 8);
 
-        cout << "Ho va ten : "; cin.getline(jr.hoten, 25);
+        cout << "Ho va ten : "; cin.getline(jr.hoten, 100);
 
-        cout << "gioi tinh : "; cin.getline(jr.gioitinh, 10);
+        cout << "gioi tinh : "; cin.getline(jr.gioitinh, 4);
 
-        cout << "Diem ky nang c++";
-        cin >> c;
+        do {
+            cout << "Diem ky nang c++";
+            cin >> c;
+        } while ((c<0)||(c>100));
         jr.scoreC = c; cin.ignore();
-        cout << "diem ky nang java";
-        cin >> java;
+
+        do {
+            cout << "diem ky nang java";
+            cin >> java;
+
+        } while ((java<0)||(java>100));
         jr.scoreJava = java; cin.ignore();
-        cout << " Diem ky nang tieng anh : "; cin>>eng;  jr.scoreE = eng; cin.ignore();
 
-        cout << " diem ki nang quan ly : "; cin>>manage;jr.manage = manage; cin.ignore();
+        do {
+            cout << " Diem ky nang tieng anh : "; cin>>eng;  
+        } while ((eng<0)||(eng>100));
+        jr.scoreE = eng; cin.ignore();
 
+        do {
+            cout << " diem ki nang quan ly : "; cin >> manage;
+        } while ((manage<0)||(manage>100));
+        jr.manage = manage; cin.ignore();
+
+        do {
+            cout << "so nam kinh nghiem: "; cin >> exp;
+        } while ((exp<0)||(exp>30));
+        jr.expOfYear = exp; cin.ignore();
         FW.write((char*)&jr, sizeof(jr));
 
         cout << "\nNhap nua khong (C/K) ? ";
@@ -433,7 +569,10 @@ void JobRequirment::BS_JOB()
 }
 
 void luachon() {
-
+    Cadidate cd;
+    JobRequirment jr;
+    cout << "so luong Candidate dang co: " << cd.SL() << endl;
+    cout << "so luong Job dang co: " << jr.SL_JOB() << endl;
     cout << "\nNhap cac phim theo thu tu 1, 2, 3, 4...de thuc hien chuc nang ";
     cout << "\nNhan phim 1: Nhap thong tin Candidate";
     cout << "\nNhan phim 2: Nhap thong tin JobRequiment";
@@ -446,17 +585,19 @@ void luachon() {
     cout << "\nNhan phim 0: Thoat khoi chuong trinh" << endl;
 
 }
+typedef struct FNC {
 
+};
 int main()
 
 {
-
-    Cadidate pm;
+    
+    Cadidate cd;
 
     JobRequirment jr;
 
     char so;
-
+    
     while (1)
 
     {
@@ -475,7 +616,7 @@ int main()
 
             system("cls");
             
-            pm.NHAP_CD(); break;
+            cd.NHAP_CD(); break;
 
         }
 
@@ -495,7 +636,7 @@ int main()
 
             system("cls");
 
-            pm.SUA_CD(); break;
+            cd.SUA_CD(); break;
 
         }
 
@@ -515,7 +656,7 @@ int main()
 
             cout << "\n thong tin ung vien : " << endl;
 
-            pm.BS_CD();
+            cd.BS_CD();
 
             break;
 
@@ -543,7 +684,7 @@ int main()
 
             cout << "\n danh sach thong tin ung vien " << endl;
 
-            pm.INRA_CD();
+            cd.INRA_CD();
 
 
             break;
@@ -562,5 +703,5 @@ int main()
         }
 
     }
-
+    return 0;
 }
